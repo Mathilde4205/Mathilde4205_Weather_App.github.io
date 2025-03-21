@@ -62,7 +62,7 @@ function App() {
   /*Lancement de l'API au changement de ville*/
   useEffect(() => {
     if (!ville) return
-    fetch("/api/v1/weathers?search=" + ville)
+    fetch(`/api/v1/weathers?search=${ville}`)
       .then((response) => response.json())
       .then((json) => {
         console.log(json);
