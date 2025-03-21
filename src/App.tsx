@@ -18,6 +18,7 @@ interface Weather {
 function App() {
   const [ville, setVille] = useState("Paris");
   const [weather, setWeather] = useState<Weather>();
+  const [loading, setLoading] = useState(false);
 
   const VilleChoisie = useRef<HTMLInputElement>(null);
 
@@ -60,12 +61,15 @@ function App() {
   /*Lancement de l'API au changement de ville*/
   useEffect(() => {
     if (!ville) return
+    setLoading(true);
     fetch(`/api/v1/weathers?search=${ville}`)
       .then((response) => response.json())
       .then((json) => {
         console.log(json);
         setWeather(json[0]);
-      });
+      })
+      .catch((e)=> {alert("L'appel API n'a pas fonctionné")})
+      .finally(() => setLoading(false));
     localStorage.setItem("weatherData", JSON.stringify(weather));
   }, [ville]);
 
@@ -83,6 +87,7 @@ function App() {
         </svg>
         <input id='recherche' placeholder='Rechercher' type="text" ref={VilleChoisie} />
       </form>
+      {loading && <p>Chargement...</p>}
       <div>
         <p className='WeatherCity'>{weather?.city} , {weather?.country}</p>
         <div className='WeatherInfos'>
@@ -90,21 +95,45 @@ function App() {
             {weather?.weather_description}
           </div>
           <div className='ColDroite'>
-            {weather?.weather_description.toLowerCase() === "clear sky" ? IconWeather["Clear sky"] : ""}
-            {weather?.weather_description.toLowerCase() === "partly cloudy" ? IconWeather["Partly cloudy"] : ""}
-            {weather?.weather_description.toLowerCase() === "sunny" ? IconWeather["Sunny"] : ""}
-            {weather?.weather_description.toLowerCase() === "cloudy" ? IconWeather["Cloudy"] : ""}
-            {weather?.weather_description.toLowerCase() === "rain showers" ? IconWeather["Rain showers"] : ""}
-            {weather?.weather_description.toLowerCase() === "rainy" ? IconWeather["Rainy"] : ""}
+            {(() => {
+              switch (weather?.weather_description.toLowerCase()) {
+              case "clear sky":
+                return IconWeather["Clear sky"];
+              case "partly cloudy":
+                return IconWeather["Partly cloudy"];
+              case "sunny":
+                return IconWeather["Sunny"];
+              case "cloudy":
+                return IconWeather["Cloudy"];
+              case "rain showers":
+                return IconWeather["Rain showers"];
+              case "rainy":
+                return IconWeather["Rainy"];
+              default:
+                return null;
+              }
+            })()}
           </div>
         </div>
         <div className='WeatherAdvice'>
-          {weather?.weather_description.toLowerCase() === "clear sky" ? AdviceWeather["Clear sky"] : ""}
-          {weather?.weather_description.toLowerCase() === "partly cloudy" ? AdviceWeather["Partly cloudy"] : ""}
-          {weather?.weather_description.toLowerCase() === "sunny" ? AdviceWeather["Sunny"] : ""}
-          {weather?.weather_description.toLowerCase() === "cloudy" ? AdviceWeather["Cloudy"] : ""}
-          {weather?.weather_description.toLowerCase() === "rain showers" ? AdviceWeather["Rain showers"] : ""}
-          {weather?.weather_description.toLowerCase() === "rainy" ? AdviceWeather["Rainy"] : ""}
+            {(() => {
+            switch (weather?.weather_description.toLowerCase()) {
+              case "clear sky":
+              return AdviceWeather["Clear sky"];
+              case "partly cloudy":
+              return AdviceWeather["Partly cloudy"];
+              case "sunny":
+              return AdviceWeather["Sunny"];
+              case "cloudy":
+              return AdviceWeather["Cloudy"];
+              case "rain showers":
+              return AdviceWeather["Rain showers"];
+              case "rainy":
+              return AdviceWeather["Rainy"];
+              default:
+              return null;
+            }
+            })()}
         </div>
       </div>
     </div>
