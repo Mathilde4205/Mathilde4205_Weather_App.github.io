@@ -68,7 +68,7 @@ function App() {
         console.log(json);
         setWeather(json[0]);
       })
-      .catch((e)=> {alert("L'appel API n'a pas fonctionné")})
+      .catch((_)=> {alert("L'appel API n'a pas fonctionné")})
       .finally(() => setLoading(false));
     localStorage.setItem("weatherData", JSON.stringify(weather));
   }, [ville]);
